@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:test_flutter_bankyo/post.dart';
-
+import 'package:test_flutter_bankyo/posts/homePost.dart';
+import 'package:test_flutter_bankyo/screen/courseScreen.dart';
 class ListViewPosts extends StatelessWidget {
-  final List<Post> posts;
+  final List<HomePosts> posts;
 
   ListViewPosts({Key key, this.posts}) : super(key: key);
 
@@ -10,15 +10,11 @@ class ListViewPosts extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: ListView.builder(
-
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
           itemCount: posts.length,
           itemBuilder: (context, position) {
-
-
             TextTheme textTheme = Theme.of(context).textTheme;
-
 
             return Card(
                 color: Color.fromRGBO(0, 0, 0, 0.0),
@@ -26,16 +22,15 @@ class ListViewPosts extends StatelessWidget {
                 elevation: 0.0,
 //                margin: new EdgeInsets.symmetric(horizontal:5.0,vertical: 5.0),
                 child: Container(
-
                   child: ListTile(
                     contentPadding:
-                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                     leading: Container(
                       padding: EdgeInsets.only(right: 12.0),
                       child: Icon(Icons.autorenew, color: Colors.white),
                     ),
                     title: Text(
-                      '${posts[position].title}',
+                      '${posts[position].name}',
                       style: textTheme.title,
                     ),
                     // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
@@ -45,11 +40,11 @@ class ListViewPosts extends StatelessWidget {
                     onTap: () => _onTapItem(context, posts[position]),
                   ),
                   //底線
-                  decoration:
-                  const BoxDecoration(
+                  decoration: const BoxDecoration(
                     border: Border(
-                      bottom:
-                          BorderSide(width: 1.0, color: Color.fromRGBO(255, 255, 255, 0.2)),
+                      bottom: BorderSide(
+                          width: 1.0,
+                          color: Color.fromRGBO(255, 255, 255, 0.2)),
                     ),
                     color: Color.fromRGBO(0, 0, 0, 0.0),
                   ),
@@ -58,8 +53,11 @@ class ListViewPosts extends StatelessWidget {
     );
   }
 
-  void _onTapItem(BuildContext context, Post post) {
-    Scaffold.of(context).showSnackBar(new SnackBar(
-        content: new Text(post.id.toString() + ' - ' + post.title)));
+  void _onTapItem(BuildContext context, HomePosts post) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Course(post.id.toString(),post.name)));
+//    Scaffold.of(context).showSnackBar(new SnackBar(
+//        content: new Text(post.id.toString() + ' - ' + post.title)));
   }
 }

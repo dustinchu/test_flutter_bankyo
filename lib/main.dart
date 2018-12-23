@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:test_flutter_bankyo/ui/homeScreen.dart';
-import 'package:http/http.dart' as http;
+import 'package:test_flutter_bankyo/screen/homeScreen.dart';
+import 'package:test_flutter_bankyo/source/bankyo_api.dart';
 
 void main() {
   runApp(new MyApp());
@@ -11,10 +11,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: 'Flutter Demo',
-      theme:
-          _buildTheme(),
-
-      home: new HomeScreen(),
+      theme: _buildTheme(),
+      //將url連線資料傳過去
+      home: new HomeScreen(bankyoResource),
       debugShowCheckedModeBanner: true,
     );
   }
@@ -26,12 +25,7 @@ ThemeData _buildTheme() {
   return base.copyWith(
       textTheme: base.textTheme.apply(fontFamily: 'Hiragino Kaku Gothic ProN'),
       primaryTextTheme:
-      base.primaryTextTheme.apply(fontFamily: 'Hiragino Kaku Gothic ProN'),
-
+          base.primaryTextTheme.apply(fontFamily: 'Hiragino Kaku Gothic ProN'),
       accentTextTheme:
-      base.accentTextTheme.apply(fontFamily: 'Hiragino Kaku Gothic ProN')
-
-  );
-
+          base.accentTextTheme.apply(fontFamily: 'Hiragino Kaku Gothic ProN'));
 }
-

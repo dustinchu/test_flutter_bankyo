@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:test_flutter_bankyo/screen/topAppBar.dart';
 import 'package:test_flutter_bankyo/posts/homePost.dart';
-import 'package:test_flutter_bankyo/models/homePosts.dart';
+import 'package:test_flutter_bankyo/models/homeListView.dart';
 import 'package:test_flutter_bankyo/models/models.dart';
 import 'package:http/http.dart' as http;
 
@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
               if (snapshot.hasError) print(snapshot.error);
 
               return snapshot.hasData
-                  ? ListViewPosts(posts: snapshot.data)
+                  ? HomeListViewPosts(posts: snapshot.data)
                   : Center(child: CircularProgressIndicator());
             },
           ),

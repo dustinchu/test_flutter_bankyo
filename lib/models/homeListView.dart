@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:test_flutter_bankyo/posts/homePost.dart';
-import 'package:test_flutter_bankyo/screen/courseScreen.dart';
-class ListViewPosts extends StatelessWidget {
+import 'package:test_flutter_bankyo/source/course.dart';
+class HomeListViewPosts extends StatelessWidget {
   final List<HomePosts> posts;
 
-  ListViewPosts({Key key, this.posts}) : super(key: key);
+  HomeListViewPosts({Key key, this.posts}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class ListViewPosts extends StatelessWidget {
   void _onTapItem(BuildContext context, HomePosts post) {
     Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Course(post.id.toString(),post.name)));
+        MaterialPageRoute(builder: (context) => Course(post.id.toString())));
 //    Scaffold.of(context).showSnackBar(new SnackBar(
 //        content: new Text(post.id.toString() + ' - ' + post.title)));
   }

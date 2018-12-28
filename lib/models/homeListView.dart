@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_flutter_bankyo/posts/homePost.dart';
-import 'package:test_flutter_bankyo/source/course.dart';
+import 'package:test_flutter_bankyo/resources/course.dart';
 class HomeListViewPosts extends StatelessWidget {
   final List<HomePosts> posts;
 

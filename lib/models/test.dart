@@ -1,28 +1,30 @@
 import 'dart:async';
+import 'dart:typed_data';
+import 'package:http/http.dart';
 import 'package:test_flutter_bankyo/posts/coursePost.dart';
 import 'package:flutter/material.dart';
 import 'package:test_flutter_bankyo/models/audioplayer.dart';
 import 'package:test_flutter_bankyo/utf/bankyoApi.dart';
-import 'package:test_flutter_bankyo/utf/saveContext.dart';
+import 'dart:convert' show utf8;
 
 typedef void OnError(Exception exception);
 
 enum PlayerState { stopped, playing }
 
-class CourseListViewPosts extends StatefulWidget {
+class AudioApp extends StatefulWidget {
   final List<CoursePosts> posts;
 
-  CourseListViewPosts({Key key, this.posts}) : super(key: key);
+  AudioApp({Key key, this.posts}) : super(key: key);
 
   @override
-  _CourseListViewPosts createState() => new _CourseListViewPosts(posts);
+  _AudioAppState createState() => new _AudioAppState(posts);
 }
 
-class _CourseListViewPosts extends State<CourseListViewPosts> {
+class _AudioAppState extends State<AudioApp> {
   bool isIcon = false;
 
 
-  _CourseListViewPosts(this.posts);
+  _AudioAppState(this.posts);
 
   StreamSubscription _positionSubscription;
   StreamSubscription _audioPlayerStateSubscription;
@@ -84,23 +86,23 @@ class _CourseListViewPosts extends State<CourseListViewPosts> {
         .listen((p) => setState(() => position = p));
     _audioPlayerStateSubscription =
         audioPlayer.onPlayerStateChanged.listen((s) {
-          if (s == AudioPlayerState.PLAYING) {
-            setState(() => duration = audioPlayer.duration);
-          } else if (s == AudioPlayerState.STOPPED) {
-            onComplete();
-            //播放結束 刷新頁面
-            setState(() {
-              position = duration;
-              isPlayControl = true;
-            });
-          }
-        }, onError: (msg) {
-          setState(() {
-            playerState = PlayerState.stopped;
-            duration = new Duration(seconds: 0);
-            position = new Duration(seconds: 0);
-          });
+      if (s == AudioPlayerState.PLAYING) {
+        setState(() => duration = audioPlayer.duration);
+      } else if (s == AudioPlayerState.STOPPED) {
+        onComplete();
+        //播放結束 刷新頁面
+        setState(() {
+          position = duration;
+          isPlayControl = true;
         });
+      }
+    }, onError: (msg) {
+      setState(() {
+        playerState = PlayerState.stopped;
+        duration = new Duration(seconds: 0);
+        position = new Duration(seconds: 0);
+      });
+    });
   }
 
   Future play(url) async {
@@ -140,7 +142,7 @@ class _CourseListViewPosts extends State<CourseListViewPosts> {
                 child: Container(
                   child: ListTile(
                     contentPadding:
-                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                     title: Text(
                       '${posts[position].name}',
                       style: textTheme.title,
@@ -152,20 +154,21 @@ class _CourseListViewPosts extends State<CourseListViewPosts> {
                         onPressed: isPlaying
                             ? null
                             : () {
-                          isPostsID = position;
-                          //判斷播放狀態
-                          if (isPlayControl) {
-                            //url.encodeFull 內建包  將String 轉成urlencode
-                            play(bankyoResource.playUrl +
-                                Uri.encodeFull(posts[position].body));
-                            isPlayControl = false;
-                          } else {
-                            stop();
-                            isPlayControl = true;
-                          }
-                        }),
+                                isPostsID = position;
+                                //判斷播放狀態
+                                if (isPlayControl) {
+                                  //url.encodeFull 內建包  將String 轉成urlencode
+                                  play(bankyoResource.playUrl +
+                                      Uri.encodeFull(posts[position].body));
+                                  isPlayControl = false;
+                                } else {
+                                  stop();
+                                  isPlayControl = true;
+                                }
+                              }),
                   ),
                   //底線
+
                   decoration: const BoxDecoration(
                     border: Border(
                       bottom: BorderSide(

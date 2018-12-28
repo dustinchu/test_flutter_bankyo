@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_flutter_bankyo/screen/homeScreen.dart';
-import 'package:test_flutter_bankyo/source/bankyo_api.dart';
+import 'package:test_flutter_bankyo/utf/bankyoApi.dart';
 
 void main() {
   runApp(new MyApp());

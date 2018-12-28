@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'package:test_flutter_bankyo/screen/makeBotton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:test_flutter_bankyo/screen/topAppBar.dart';
+import 'package:test_flutter_bankyo/appBar/HomeAppBar.dart';
 import 'package:test_flutter_bankyo/posts/homePost.dart';
 import 'package:test_flutter_bankyo/models/homeListView.dart';
-import 'package:test_flutter_bankyo/models/models.dart';
+import 'package:test_flutter_bankyo/utf/bankyoApi.dart';
 import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {

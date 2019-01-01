@@ -37,7 +37,8 @@ class HomeListViewPosts extends StatelessWidget {
 
                     trailing: Icon(Icons.keyboard_arrow_right,
                         color: Colors.white, size: 30.0),
-                    onTap: () => _onTapItem(context, posts[position]),
+                    //傳入選擇的ID 跟選擇的名稱
+                    onTap: () => _onTapItem(context, posts[position],posts[position].name),
                   ),
                   //底線
                   decoration: const BoxDecoration(
@@ -53,10 +54,10 @@ class HomeListViewPosts extends StatelessWidget {
     );
   }
 
-  void _onTapItem(BuildContext context, HomePosts post) {
+  void _onTapItem(BuildContext context, HomePosts post,String ItemName) {
     Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Course(post.id.toString())));
+        MaterialPageRoute(builder: (context) => Course(post.id.toString(),ItemName)));
 //    Scaffold.of(context).showSnackBar(new SnackBar(
 //        content: new Text(post.id.toString() + ' - ' + post.title)));
   }

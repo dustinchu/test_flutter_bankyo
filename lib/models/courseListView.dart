@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'package:test_flutter_bankyo/posts/coursePost.dart';
 import 'package:flutter/material.dart';
-import 'package:test_flutter_bankyo/models/audioplayer.dart';
+import 'package:test_flutter_bankyo/utf/audioplayer.dart';
 import 'package:test_flutter_bankyo/utf/bankyoApi.dart';
-import 'package:test_flutter_bankyo/utf/saveContext.dart';
-
+import 'package:test_flutter_bankyo/utf/dialogResult.dart';
 typedef void OnError(Exception exception);
 
 enum PlayerState { stopped, playing }
@@ -32,7 +31,7 @@ class _CourseListViewPosts extends State<CourseListViewPosts> {
   Duration duration;
   Duration position;
 
-  AudioPlayer audioPlayer;
+  AudioPlayer audioPlayer ;
 
   PlayerState playerState = PlayerState.stopped;
 
@@ -50,6 +49,7 @@ class _CourseListViewPosts extends State<CourseListViewPosts> {
     if (isIcon) {
       //判斷點擊的是否一致 一致改變icon不一樣代表不是點擊的item
       if (position == isPostsID) {
+        print('${position}'+'${isPlayControl}');
         if (isPlayControl) {
           return Icon(Icons.play_arrow);
         } else {
@@ -87,12 +87,9 @@ class _CourseListViewPosts extends State<CourseListViewPosts> {
           if (s == AudioPlayerState.PLAYING) {
             setState(() => duration = audioPlayer.duration);
           } else if (s == AudioPlayerState.STOPPED) {
-            onComplete();
             //播放結束 刷新頁面
-            setState(() {
-              position = duration;
-              isPlayControl = true;
-            });
+            onComplete();
+
           }
         }, onError: (msg) {
           setState(() {
@@ -104,15 +101,26 @@ class _CourseListViewPosts extends State<CourseListViewPosts> {
   }
 
   Future play(url) async {
-    await audioPlayer.play(url);
-    setState(() {
+    //跳轉dialog的時候 初始化會丟失
+    //dialog關閉的時候 將result改成true  dialog 啟動的時候改成false
+    if( DialogResult.result==true){
+      print('"?????????????');
+      _positionSubscription.cancel();
+      _audioPlayerStateSubscription.cancel();
+      audioPlayer.stop();
+      initAudioPlayer();
+      DialogResult.result=false;
+    }
+    print('"?');
 
-    });
+    await audioPlayer.play(url);
+    setState(() {});
   }
 
   Future stop() async {
     await audioPlayer.stop();
     setState(() {
+      isPlayControl = true;
       playerState = PlayerState.stopped;
       position = new Duration();
     });
@@ -120,6 +128,8 @@ class _CourseListViewPosts extends State<CourseListViewPosts> {
 
   void onComplete() {
     setState(() => playerState = PlayerState.stopped);
+    position = duration;
+    isPlayControl = true;
   }
 
   @override
@@ -156,12 +166,13 @@ class _CourseListViewPosts extends State<CourseListViewPosts> {
                           //判斷播放狀態
                           if (isPlayControl) {
                             //url.encodeFull 內建包  將String 轉成urlencode
+                            isPlayControl = false;
                             play(bankyoResource.playUrl +
                                 Uri.encodeFull(posts[position].body));
-                            isPlayControl = false;
+
                           } else {
                             stop();
-                            isPlayControl = true;
+
                           }
                         }),
                   ),

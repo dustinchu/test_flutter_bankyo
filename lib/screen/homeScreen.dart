@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:test_flutter_bankyo/screen/makeBotton.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:test_flutter_bankyo/appBar/HomeAppBar.dart';
@@ -7,20 +6,14 @@ import 'package:test_flutter_bankyo/posts/homePost.dart';
 import 'package:test_flutter_bankyo/models/homeListView.dart';
 import 'package:test_flutter_bankyo/utf/bankyoApi.dart';
 import 'package:http/http.dart' as http;
-
 class HomeScreen extends StatefulWidget {
-  HomeScreen(this.bankyo);
-
-  final Bankyo bankyo;
 
   @override
-  _HomeScreenState createState() => new _HomeScreenState(bankyo);
+  _HomeScreenState createState() => new _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  _HomeScreenState(this.bankyo);
 
-  final Bankyo bankyo;
 
   @override
   build(BuildContext context) {
@@ -38,10 +31,10 @@ class _HomeScreenState extends State<HomeScreen> {
         child: new Container(
             child: new Scaffold(
           //漸層背景在上一層
-          backgroundColor: Color.fromRGBO(29, 29, 38, 0.1),
+          backgroundColor: Color.fromRGBO(29, 29, 38, 0.2),
           appBar: topAppBar(),
           body: FutureBuilder<List<HomePosts>>(
-            future: fetchPosts(http.Client(), bankyo),
+            future: fetchPosts(http.Client(), bankyoResource),
             builder: (context, snapshot) {
               if (snapshot.hasError) print(snapshot.error);
 
@@ -50,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   : Center(child: CircularProgressIndicator());
             },
           ),
-          bottomNavigationBar: makeBotton(),
         )));
   }
 }

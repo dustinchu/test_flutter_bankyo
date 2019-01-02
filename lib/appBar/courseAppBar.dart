@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:test_flutter_bankyo/dialog/bankyoCard.dart';
-import 'package:test_flutter_bankyo/resources/exercise.dart';
+import 'package:test_flutter_bankyo/resources/describe.dart';
 import 'package:test_flutter_bankyo/posts/coursePost.dart';
 
   Widget courseAppBar(BuildContext context , String titleName) {
@@ -11,7 +11,7 @@ import 'package:test_flutter_bankyo/posts/coursePost.dart';
       title: Text(titleName),
       actions: <Widget>[
         IconButton(
-          icon: Icon(Icons.chat),
+          icon: Icon(Icons.edit),
           onPressed: () {
           ShowDialog(context);
 //            Navigator.push(

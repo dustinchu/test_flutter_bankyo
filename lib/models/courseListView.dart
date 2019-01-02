@@ -104,14 +104,12 @@ class _CourseListViewPosts extends State<CourseListViewPosts> {
     //跳轉dialog的時候 初始化會丟失
     //dialog關閉的時候 將result改成true  dialog 啟動的時候改成false
     if( DialogResult.result==true){
-      print('"?????????????');
       _positionSubscription.cancel();
       _audioPlayerStateSubscription.cancel();
       audioPlayer.stop();
       initAudioPlayer();
       DialogResult.result=false;
     }
-    print('"?');
 
     await audioPlayer.play(url);
     setState(() {});

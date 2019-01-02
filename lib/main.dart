@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:test_flutter_bankyo/screen/homeScreen.dart';
-import 'package:test_flutter_bankyo/utf/bankyoApi.dart';
-
+import 'package:test_flutter_bankyo/bottomNavigtion/bottomCustomTab.dart';
+import 'package:flutter/rendering.dart' show debugPaintSizeEnabled;
 void main() {
-  runApp(new MyApp());
+//  debugPaintSizeEnabled = true;
+  runApp(
+      new MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   @override
@@ -13,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: _buildTheme(),
       //將url連線資料傳過去
-      home: new HomeScreen(bankyoResource),
+      home: Tabbed(),
       debugShowCheckedModeBanner: true,
     );
   }

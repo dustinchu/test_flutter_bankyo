@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_flutter_bankyo/posts/homePost.dart';
-import 'package:test_flutter_bankyo/resources/course.dart';
+import 'package:test_flutter_bankyo/screen/courseScreen.dart';
+
 class HomeListViewPosts extends StatelessWidget {
   final List<HomePosts> posts;
 
@@ -24,7 +25,7 @@ class HomeListViewPosts extends StatelessWidget {
                 child: Container(
                   child: ListTile(
                     contentPadding:
-                    EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                     leading: Container(
                       padding: EdgeInsets.only(right: 12.0),
                       child: Icon(Icons.autorenew, color: Colors.white),
@@ -38,7 +39,8 @@ class HomeListViewPosts extends StatelessWidget {
                     trailing: Icon(Icons.keyboard_arrow_right,
                         color: Colors.white, size: 30.0),
                     //傳入選擇的ID 跟選擇的名稱
-                    onTap: () => _onTapItem(context, posts[position],posts[position].name),
+                    onTap: () => _onTapItem(
+                        context, posts[position], posts[position].name),
                   ),
                   //底線
                   decoration: const BoxDecoration(
@@ -54,10 +56,11 @@ class HomeListViewPosts extends StatelessWidget {
     );
   }
 
-  void _onTapItem(BuildContext context, HomePosts post,String ItemName) {
+  void _onTapItem(BuildContext context, HomePosts post, String ItemName) {
     Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Course(post.id.toString(),ItemName)));
+        MaterialPageRoute(
+            builder: (context) => Course(post.id.toString(), ItemName)));
 //    Scaffold.of(context).showSnackBar(new SnackBar(
 //        content: new Text(post.id.toString() + ' - ' + post.title)));
   }

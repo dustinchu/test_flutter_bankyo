@@ -1,9 +1,12 @@
 import 'dart:convert';
-import 'package:test_flutter_bankyo/screen/makeBotton.dart';
 import 'package:flutter/material.dart';
 import 'package:test_flutter_bankyo/posts/coursePost.dart';
 import 'package:test_flutter_bankyo/models/courseListview.dart';
-
+import 'package:test_flutter_bankyo/utf/bankyoApi.dart';
+import 'package:test_flutter_bankyo/appBar/courseAppBar.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
+import 'package:test_flutter_bankyo/utf/course.dart';
 class CourseScreen extends StatefulWidget {
   CourseScreen(this.posts);
 
@@ -32,9 +35,10 @@ class _CourseScreenState extends State<CourseScreen> {
         stops: [0.0, 1.0],
       )),
       child: new Container(
+
         child: new Scaffold(
           //漸層背景在上一層
-          backgroundColor: Color.fromRGBO(29, 29, 38, 0.1),
+          backgroundColor: Color.fromRGBO(29, 29, 38, 0.2),
           body: FutureBuilder<List<CoursePosts>>(
             future: posts,
             builder: (context, snapshot) {
@@ -45,9 +49,46 @@ class _CourseScreenState extends State<CourseScreen> {
                   : Center(child: CircularProgressIndicator());
             },
           ),
-          bottomNavigationBar: makeBotton(),
+//          bottomNavigationBar: MakeBottonScreenState(),
         ),
       ),
     );
   }
+}
+
+
+
+
+class Course extends StatelessWidget {
+  final homeSelectId;
+  final itemName;
+
+  Course(this.homeSelectId, this.itemName);
+
+  @override
+  Widget build(BuildContext context) {
+    final Future<List<CoursePosts>> posts =
+    fetchPosts(http.Client(), bankyoResource, homeSelectId);
+    return Scaffold(
+        appBar: courseAppBar(context, itemName),
+        body: CourseScreen(posts));
+  }
+}
+
+//撈取課程資料 回傳一個json
+Future<List<CoursePosts>> fetchPosts(
+    http.Client client, Bankyo bankyoUrl, homeSelectId) async {
+  final response =
+  await client.get(bankyoUrl.courseListViewUrl + '${homeSelectId}');
+  //save Json Length  儲存到static
+  ListLength.length = parsePosts(response.body).length;
+  return compute(parsePosts, response.body);
+}
+
+List<CoursePosts> parsePosts(String responseBody) {
+  final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
+  //將list先存起來 讓練習dialog使用
+  ListLength.coursePostsList =
+      parsed.map<CoursePosts>((json) => CoursePosts.fromJson(json)).toList();
+  return parsed.map<CoursePosts>((json) => CoursePosts.fromJson(json)).toList();
 }

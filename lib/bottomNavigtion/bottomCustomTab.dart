@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:test_flutter_bankyo/screen/homeScreen.dart';
-import 'package:test_flutter_bankyo/resources/testPage.dart';
-
+import 'package:test_flutter_bankyo/screen/describeScreen.dart';
+import 'package:test_flutter_bankyo/screen/newsTitleScreen.dart';
+import 'package:test_flutter_bankyo/screen/exerciseScreen.dart';
+import 'package:test_flutter_bankyo/screen/welcomeScreen.dart';
 class CustomTab extends StatelessWidget {
   final Widget child;
   BuildContext tabContext;
@@ -33,14 +35,17 @@ class _TabbedState extends State<Tabbed> {
       child: HomeScreen(),
     ),
     CustomTab(
-      child: Page(),
+      child: DescribeScreen(),
     ),
     CustomTab(
-      child: Page(),
+      child:  NewsTitleScreen(),
     ),
     CustomTab(
-      child: Page(),
+      child: ExerciseScreen(),
     ),
+//    CustomTab(
+//      child: WelcomeScreen(),
+//    ),
   ];
 
   Future<Null> _setTab(int index) async {
@@ -112,7 +117,7 @@ class _TabbedState extends State<Tabbed> {
               ],
               stops: [0.0, 1.0],
             )),
-        height: 65.0,
+        height: 50.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
@@ -171,13 +176,12 @@ class _TabbedState extends State<Tabbed> {
                       color: _currentTab == 3
                   ? Color.fromRGBO(255, 255, 255, 1.0)
                   : Color.fromRGBO(228, 196, 233, 1.0),),
-                  Text("翻譯",
+                  Text("練習",
                       style: TextStyle(color: _currentTab == 3
                           ? Color.fromRGBO(255, 255, 255, 1.0)
                           : Color.fromRGBO(228, 196, 233, 1.0))),
                 ],
               ),),
-
 //            IconButton(
 //              iconSize: 20.0,
 //              tooltip: '翻譯',

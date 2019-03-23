@@ -4,7 +4,7 @@ import 'dart:async';
 import 'package:test_flutter_bankyo/utf/course.dart';
 import 'package:test_flutter_bankyo/utf/dialogResult.dart';
 import 'package:test_flutter_bankyo/utf/audioplayer.dart';
-import 'package:test_flutter_bankyo/utf/bankyoApi.dart';
+import 'package:test_flutter_bankyo/posts/urlPost.dart';
 
 class ShowDialog {
   ShowDialog(BuildContext context) {
@@ -36,7 +36,7 @@ typedef void OnError(Exception exception);
 enum PlayerState { stopped, playing }
 
 class DialogContentState extends State<DialogContent> {
-  var titleName = ListLength.coursePostsList[dataSet].name;
+  var titleName = ListLength.coursePostsList[dataSet].title;
 
   //獲取輸入數值使用的控制器
   final myController = TextEditingController();
@@ -69,7 +69,7 @@ class DialogContentState extends State<DialogContent> {
   @override
   void dispose() {
 
-    DialogResult.result=true;
+    PlayStatus.CourseDialog=true;
 
     _positionSubscription.cancel();
     _audioPlayerStateSubscription.cancel();
@@ -79,7 +79,7 @@ class DialogContentState extends State<DialogContent> {
   //初始化 會自動執行
   @override
   void initState() {
-    DialogResult.result=false;
+    PlayStatus.CourseDialog=false;
     super.initState();
     initAudioPlayer();
   }
@@ -135,7 +135,7 @@ class DialogContentState extends State<DialogContent> {
 
     //亂數顯示內容或標題
     if (dataRandom == true) {
-      titleName = ListLength.coursePostsList[dataSet].name;
+      titleName = ListLength.coursePostsList[dataSet].title;
     } else {
       titleName = ListLength.coursePostsList[dataSet].body;
     }
@@ -165,53 +165,53 @@ class DialogContentState extends State<DialogContent> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             SizedBox(
-              height: 70.0,
-              child: Center(
-                  child: Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: IconButton(
-                      icon: Icon(Icons.refresh),
-                      onPressed: () {
-                        setState(() {
-                          randomvoid();
-                        });
-                      },
-                    ),
+        height: 70.0,
+        child: Center(
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: IconButton(
+                    icon: Icon(Icons.refresh),
+                    onPressed: () {
+                      setState(() {
+                        randomvoid();
+                      });
+                    },
                   ),
-                  //標題
-                  Expanded(
-                      flex: 2,
-                      child: Text(
-                        '${titleName}',
-                        style: TextStyle(color: Colors.white),
-                        textAlign: TextAlign.center,
-                      )),
-                  Expanded(
-                    flex: 1,
-                    child: IconButton(
-                      icon: icon,
-                      onPressed: isPlaying
-                          ? null
-                          : () {
-                              //判斷播放狀態
-                              if (isPlayControl) {
-                                //url.encodeFull 內建包  將String 轉成urlencode
-                                play(bankyoResource.playUrl +
-                                    Uri.encodeFull(ListLength
-                                        .coursePostsList[dataSet].body));
-                                isPlayControl = false;
-                              } else {
-                                stop();
-                                isPlayControl = true;
-                              }
-                            },
-                    ),
+                ),
+                //標題
+                Expanded(
+                    flex: 2,
+                    child: Text(
+                      '${titleName}',
+                      style: TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
+                    )),
+                Expanded(
+                  flex: 1,
+                  child: IconButton(
+                    icon: icon,
+                    onPressed: isPlaying
+                        ? null
+                        : () {
+                      //判斷播放狀態
+                      if (isPlayControl) {
+                        //url.encodeFull 內建包  將String 轉成urlencode
+                        play(url[0].playUrl +
+                            Uri.encodeFull(ListLength
+                                .coursePostsList[dataSet].body));
+                        isPlayControl = false;
+                      } else {
+                        stop();
+                        isPlayControl = true;
+                      }
+                    },
                   ),
-                ],
-              )),
-            ),
+                ),
+              ],
+            )),
+      ),
             //分隔線
             Divider(
               color: Colors.grey,
@@ -304,7 +304,7 @@ class DialogContentState extends State<DialogContent> {
                                 });
                               }
                             } else {
-                              if (ListLength.coursePostsList[dataSet].name ==
+                              if (ListLength.coursePostsList[dataSet].title ==
                                   myController.text) {
                                 result = "正確";
                                 //正確將錯誤的次數歸零

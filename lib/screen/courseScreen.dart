@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:test_flutter_bankyo/posts/coursePost.dart';
 import 'package:test_flutter_bankyo/models/courseListview.dart';
-import 'package:test_flutter_bankyo/utf/bankyoApi.dart';
+import 'package:test_flutter_bankyo/posts/urlPost.dart';
 import 'package:test_flutter_bankyo/appBar/courseAppBar.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
@@ -68,7 +68,7 @@ class Course extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Future<List<CoursePosts>> posts =
-    fetchPosts(http.Client(), bankyoResource, homeSelectId);
+    fetchPosts(http.Client(), homeSelectId);
     return Scaffold(
         appBar: courseAppBar(context, itemName),
         body: CourseScreen(posts));
@@ -77,9 +77,9 @@ class Course extends StatelessWidget {
 
 //撈取課程資料 回傳一個json
 Future<List<CoursePosts>> fetchPosts(
-    http.Client client, Bankyo bankyoUrl, homeSelectId) async {
+    http.Client client, homeSelectId) async {
   final response =
-  await client.get(bankyoUrl.courseListViewUrl + '${homeSelectId}');
+  await client.get(url[0].courseListViewUrl + '${homeSelectId}');
   //save Json Length  儲存到static
   ListLength.length = parsePosts(response.body).length;
   return compute(parsePosts, response.body);

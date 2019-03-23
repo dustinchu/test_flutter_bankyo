@@ -1,8 +1,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:test_flutter_bankyo/dialog/bankyoCard.dart';
-import 'package:test_flutter_bankyo/resources/describe.dart';
-import 'package:test_flutter_bankyo/posts/coursePost.dart';
 
   Widget courseAppBar(BuildContext context , String titleName) {
     return AppBar(

@@ -1,189 +1,202 @@
-import 'dart:async';
-import 'dart:typed_data';
-import 'package:http/http.dart';
-import 'package:test_flutter_bankyo/posts/coursePost.dart';
 import 'package:flutter/material.dart';
-import 'package:test_flutter_bankyo/models/audioplayer.dart';
-import 'package:test_flutter_bankyo/utf/bankyoApi.dart';
-import 'dart:convert' show utf8;
-
-typedef void OnError(Exception exception);
-
-enum PlayerState { stopped, playing }
 
 class AudioApp extends StatefulWidget {
-  final List<CoursePosts> posts;
-
-  AudioApp({Key key, this.posts}) : super(key: key);
-
   @override
-  _AudioAppState createState() => new _AudioAppState(posts);
+  _AudioAppState createState() => new _AudioAppState();
 }
 
 class _AudioAppState extends State<AudioApp> {
-  bool isIcon = false;
-
-
-  _AudioAppState(this.posts);
-
-  StreamSubscription _positionSubscription;
-  StreamSubscription _audioPlayerStateSubscription;
-
-  final List<CoursePosts> posts;
-
-  Duration duration;
-  Duration position;
-
-  AudioPlayer audioPlayer;
-
-  PlayerState playerState = PlayerState.stopped;
-
-  get isPlaying => playerState == PlayerState.playing;
-
-  //判斷二次點擊 沒撥放完在點擊直接關閉 true=還沒播放  播放中false
-  bool isPlayControl = true;
-
-  //當點擊後 會將點擊的position存進來
-  int isPostsID;
-
-  @override
-  Icon iconStatus(position) {
-    //第一次 isIcon = false
-    if (isIcon) {
-      //判斷點擊的是否一致 一致改變icon不一樣代表不是點擊的item
-      if (position == isPostsID) {
-        if (isPlayControl) {
-          return Icon(Icons.play_arrow);
-        } else {
-          return Icon(Icons.stop);
-        }
-      } else {
-        return Icon(Icons.play_arrow);
-      }
-    } else {
-      isIcon = true;
-      return Icon(Icons.play_arrow);
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initAudioPlayer();
-  }
-
-  @override
-  void dispose() {
-    _positionSubscription.cancel();
-    _audioPlayerStateSubscription.cancel();
-    audioPlayer.stop();
-    super.dispose();
-  }
-
-  void initAudioPlayer() {
-    audioPlayer = new AudioPlayer();
-    _positionSubscription = audioPlayer.onAudioPositionChanged
-        .listen((p) => setState(() => position = p));
-    _audioPlayerStateSubscription =
-        audioPlayer.onPlayerStateChanged.listen((s) {
-      if (s == AudioPlayerState.PLAYING) {
-        setState(() => duration = audioPlayer.duration);
-      } else if (s == AudioPlayerState.STOPPED) {
-        onComplete();
-        //播放結束 刷新頁面
-        setState(() {
-          position = duration;
-          isPlayControl = true;
-        });
-      }
-    }, onError: (msg) {
-      setState(() {
-        playerState = PlayerState.stopped;
-        duration = new Duration(seconds: 0);
-        position = new Duration(seconds: 0);
-      });
-    });
-  }
-
-  Future play(url) async {
-    await audioPlayer.play(url);
-    setState(() {
-
-    });
-  }
-
-  Future stop() async {
-    await audioPlayer.stop();
-    setState(() {
-      playerState = PlayerState.stopped;
-      position = new Duration();
-    });
-  }
-
-  void onComplete() {
-    setState(() => playerState = PlayerState.stopped);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: ListView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: posts.length,
-          itemBuilder: (context, position) {
-            TextTheme textTheme = Theme.of(context).textTheme;
+    TextTheme textTheme = Theme.of(context).textTheme;
 
-            return Card(
-                color: Color.fromRGBO(0, 0, 0, 0.0),
-                //需設定0.0才會透明 不然listview有陰影
-                elevation: 0.0,
-//                margin: new EdgeInsets.symmetric(horizontal:5.0,vertical: 5.0),
-                child: Container(
-                  child: ListTile(
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                    title: Text(
-                      '${posts[position].name}',
-                      style: textTheme.title,
-                    ),
-                    subtitle: Text(posts[position].body,
-                        style: TextStyle(color: Colors.white)),
-                    trailing: IconButton(
-                        icon: iconStatus(position),
-                        onPressed: isPlaying
-                            ? null
-                            : () {
-                                isPostsID = position;
-                                //判斷播放狀態
-                                if (isPlayControl) {
-                                  //url.encodeFull 內建包  將String 轉成urlencode
-                                  play(bankyoResource.playUrl +
-                                      Uri.encodeFull(posts[position].body));
-                                  isPlayControl = false;
-                                } else {
-                                  stop();
-                                  isPlayControl = true;
-                                }
-                              }),
-                  ),
-                  //底線
+    return new Scaffold(
+      resizeToAvoidBottomPadding: false,
+        body:
 
-                  decoration: const BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                          width: 1.0,
-                          color: Color.fromRGBO(255, 255, 255, 0.2)),
+
+        new Stack(
+      children: <Widget>[
+        new Container(
+          decoration: new BoxDecoration(
+              image: new DecorationImage(
+                image: new AssetImage("images/bg_exercise.png"),
+                fit: BoxFit.cover,
+              ),
+              gradient: new LinearGradient(
+                begin: FractionalOffset.topLeft,
+                end: FractionalOffset.bottomRight,
+                colors: [
+                  const Color.fromRGBO(33, 208, 253, 1.0),
+                  const Color.fromRGBO(238, 77, 185, 1.0),
+                ],
+                stops: [0.0, 1.0],
+              )),
+
+//              decoration: new BoxDecoration(
+//
+//                image: new DecorationImage(image: new AssetImage("images/bg_exercise.png"),
+//                  colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.dstATop),
+//                  fit: BoxFit.cover,),
+//              ),
+        ),
+        new Column(
+
+          children: <Widget>[
+            //正確 錯誤
+            Expanded(
+                flex: 2,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    new Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Text(
+                            "5",
+                            style: TextStyle(color: Colors.white, fontSize: 30),
+                            textAlign: TextAlign.center,
+                          ),
+                          Text(
+                            "正確",
+                            style: textTheme.caption,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
                     ),
-                    color: Color.fromRGBO(0, 0, 0, 0.0),
+                    Container(
+                      width: 1.0,
+                      color: Colors.white30,
+                      margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+                    ),
+                    new Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Text(
+                            "5",
+                            style: TextStyle(color: Colors.white, fontSize: 30),
+                            textAlign: TextAlign.center,
+                          ),
+                          Text(
+                            "錯誤",
+                            style: textTheme.caption,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                )),
+            Divider(
+              color: Colors.white30,
+              height: 4.0,
+            ),
+
+            Expanded(
+              flex: 7,
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.play_arrow),
+                        ),
+                      ],
+                    ),
                   ),
-                ));
-          }),
+                  Expanded(
+                    flex: 9,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[Text("日本人はたぶんほとんど仕事に行きます！")],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Divider(
+              color: Colors.white30,
+              height: 4.0,
+            ),
+
+            //輸入
+            Expanded(
+              flex: 2,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 9,
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: "請輸入答案",
+                          border: InputBorder.none,
+                        ),
+                        maxLines: 1,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: IconButton(
+                        icon: Icon(Icons.send),
+                      ),
+                    ),
+                  ]),
+            ),
+
+
+
+            Divider(
+              color: Colors.white30,
+              height: 4.0,
+            ),
+
+            //按鈕
+            Expanded(
+                flex: 1,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    new Expanded(
+                      child: Text(
+                        "SKIP",
+                        style: TextStyle(color: Colors.white),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Container(
+                      width: 1.0,
+                      color: Colors.white30,
+                      margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+                    ),
+                    new Expanded(
+                      child: new InkWell(
+                        child: new Text(
+                          "NEXT",
+                          style: TextStyle(color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                        onTap: () {},
+                      ),
+                    ),
+                  ],
+                )),
+          ],
+        ),
+      ],
+    )
+
     );
   }
-}
-
-
-void _onTapItem(BuildContext context, String post) {
-  Scaffold.of(context).showSnackBar(new SnackBar(content: new Text(post)));
 }

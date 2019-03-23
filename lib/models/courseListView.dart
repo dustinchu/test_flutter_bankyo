@@ -2,14 +2,19 @@ import 'dart:async';
 import 'package:test_flutter_bankyo/posts/coursePost.dart';
 import 'package:flutter/material.dart';
 import 'package:test_flutter_bankyo/utf/audioplayer.dart';
-import 'package:test_flutter_bankyo/utf/bankyoApi.dart';
+import 'package:test_flutter_bankyo/posts/urlPost.dart';
 import 'package:test_flutter_bankyo/utf/dialogResult.dart';
+import 'package:test_flutter_bankyo/utf/addTitleBody.dart';
+import 'package:test_flutter_bankyo/models/courseListViewHelp.dart';
+
+
 typedef void OnError(Exception exception);
 
 enum PlayerState { stopped, playing }
 
 class CourseListViewPosts extends StatefulWidget {
   final List<CoursePosts> posts;
+
 
   CourseListViewPosts({Key key, this.posts}) : super(key: key);
 
@@ -22,11 +27,11 @@ class _CourseListViewPosts extends State<CourseListViewPosts> {
 
 
   _CourseListViewPosts(this.posts);
-
+  final List<CoursePosts> posts;
   StreamSubscription _positionSubscription;
   StreamSubscription _audioPlayerStateSubscription;
 
-  final List<CoursePosts> posts;
+
 
   Duration duration;
   Duration position;
@@ -49,7 +54,7 @@ class _CourseListViewPosts extends State<CourseListViewPosts> {
     if (isIcon) {
       //判斷點擊的是否一致 一致改變icon不一樣代表不是點擊的item
       if (position == isPostsID) {
-        print('${position}'+'${isPlayControl}');
+//        print('${position}'+'${isPlayControl}');
         if (isPlayControl) {
           return Icon(Icons.play_arrow);
         } else {
@@ -103,12 +108,12 @@ class _CourseListViewPosts extends State<CourseListViewPosts> {
   Future play(url) async {
     //跳轉dialog的時候 初始化會丟失
     //dialog關閉的時候 將result改成true  dialog 啟動的時候改成false
-    if( DialogResult.result==true){
+    if( PlayStatus.CourseDialog==true){
       _positionSubscription.cancel();
       _audioPlayerStateSubscription.cancel();
       audioPlayer.stop();
       initAudioPlayer();
-      DialogResult.result=false;
+      PlayStatus.CourseDialog=false;
     }
 
     await audioPlayer.play(url);
@@ -149,12 +154,17 @@ class _CourseListViewPosts extends State<CourseListViewPosts> {
                   child: ListTile(
                     contentPadding:
                     EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                    title: Text(
-                      '${posts[position].name}',
-                      style: textTheme.title,
+                    title: Wrap(
+
+                      children:createChildrenTexts(context, posts[position].title, 1,0,0)
                     ),
-                    subtitle: Text(posts[position].body,
-                        style: TextStyle(color: Colors.white)),
+                    subtitle:
+                      Padding(padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0, 0),
+                      child: Text(posts[position].body+"("+posts[position].type+")",
+                          style: TextStyle(color: Colors.white)),
+                      ),
+
+                    onTap: ()=> _onTapItem(context,posts,position),
                     trailing: IconButton(
                         icon: iconStatus(position),
                         onPressed: isPlaying
@@ -163,16 +173,17 @@ class _CourseListViewPosts extends State<CourseListViewPosts> {
                           isPostsID = position;
                           //判斷播放狀態
                           if (isPlayControl) {
-                            //url.encodeFull 內建包  將String 轉成urlencode
+                            //url.encodeFull 內建  將String 轉成urlencode
                             isPlayControl = false;
-                            play(bankyoResource.playUrl +
-                                Uri.encodeFull(posts[position].body));
+                            play(url[0].playUrl +
+                                Uri.encodeFull(posts[position].title));
 
                           } else {
                             stop();
 
                           }
                         }),
+
                   ),
                   //底線
                   decoration: const BoxDecoration(
@@ -190,6 +201,7 @@ class _CourseListViewPosts extends State<CourseListViewPosts> {
 }
 
 
-void _onTapItem(BuildContext context, String post) {
-  Scaffold.of(context).showSnackBar(new SnackBar(content: new Text(post)));
+void _onTapItem(BuildContext context, List<CoursePosts> posts,index) {
+
+  HelpShowDialog(context,posts,index);
 }
